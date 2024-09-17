@@ -1,0 +1,73 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "proto";
+option java_outer_classname = "GrpcMessageProto";
+
+package grpc;
+
+message MessageId {
+  string value = 1;
+}
+
+message MessageIds {
+  repeated MessageId messageIds = 1;
+}
+
+message Timestamp {
+  int64 value = 1;
+}
+
+message Username {
+  string value = 1;
+}
+
+message Usernames {
+  repeated Username usernames = 1;
+}
+
+message Topic {
+  string value = 1;
+  bool wildcard = 2;
+}
+
+message Topics {
+  repeated Topic topics = 1;
+}
+
+message Content {
+  string value = 1;
+}
+
+message Data {
+  bytes data = 1;
+}
+
+message Message {
+  MessageId id = 1;
+  Timestamp timestamp = 2;
+  Username username = 3;
+  Topic topic = 4;
+  Content content = 5;
+  Data data = 6;
+}
+
+message Messages {
+  repeated Message messages = 1;
+}
+
+service MessengerService {
+  rpc storeMessage (Message) returns (google.protobuf.Empty);
+  rpc storeMessages (Messages) returns (google.protobuf.Empty);
+  rpc retrieveMessage (MessageId) returns (Message);
+  rpc retrieveMessages (MessageIds) returns (Messages);
+  rpc deleteMessage (MessageId) returns (google.protobuf.Empty);
+  rpc deleteMessages (MessageIds) returns (google.protobuf.Empty);
+  rpc listUsers (google.protobuf.Empty) returns (Usernames);
+  rpc listTopics (google.protobuf.Empty) returns (Topics);
+  rpc listUserTopics (Username) returns (Topics);
+  rpc listSubscribers (Topic) returns (Usernames);
+  rpc listUserMessages (Username) returns (MessageIds);
+  rpc listTopicMessages (Topic) returns (MessageIds);
+}
