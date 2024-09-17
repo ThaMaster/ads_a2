@@ -306,4 +306,16 @@ public class Util
         list.add(arg);
     return list.toArray(new String[list.size()]);
   }
+
+  //----------------------------------------------------------
+  // Additional util functions
+  public static boolean validateNodeId(String id) {
+    // NEED TO CHECK THAT THE ID IS NOT MORE THAN m BIT. m is the number of
+    return id.length() == SIZE_ID;
+  }
+
+  public static boolean validateKey(String key) {
+    // NEED TO CHECK THAT THE ID IS NOT MORE THAN m BIT. m is the number of
+    return key.length() == SIZE_ID;
+  }
 }
