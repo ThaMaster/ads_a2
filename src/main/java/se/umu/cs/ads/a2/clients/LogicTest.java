@@ -1,13 +1,17 @@
 package se.umu.cs.ads.a2.clients;
 
+import se.umu.cs.ads.a2.interfaces.MessengerDHT;
+
 import java.util.ArrayList;
 
 public class LogicTest {
 
+    private final MessengerDHT dht;
     private int currentTest = 0;
 
     //----------------------------------------------------------
-    public LogicTest() {
+    public LogicTest(MessengerDHT dht) {
+        this.dht = dht;
     }
 
     public void runAllTests() {

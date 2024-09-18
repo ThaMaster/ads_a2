@@ -1,6 +1,11 @@
 package se.umu.cs.ads.a2.util;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,7 +37,6 @@ public class Util
   private static final int LENGTH_WILDCARD   = WILDCARD.length();
   private static final String CHARS          = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   private static final Random RANDOM         = new Random();
-
 
   //----------------------------------------------------------
   //----------------------------------------------------------
@@ -289,12 +293,12 @@ public class Util
   }
 
   //----------------------------------------------------------
-  public static boolean containsFlag (String[] args, String flag)
+  public static int containsFlag (String[] args, String flag)
   {
-    for (String arg : args)
-      if (arg.startsWith(flag))
-        return true;
-    return false;
+    for(int i = 0; i < args.length; i++)
+      if(args[i].equals(flag))
+        return i;
+    return -1;
   }
 
   //----------------------------------------------------------
@@ -309,13 +313,110 @@ public class Util
 
   //----------------------------------------------------------
   // Additional util functions
-  public static boolean validateNodeId(String id) {
+  public static boolean validateNodeId(String id, int bitSize) {
     // NEED TO CHECK THAT THE ID IS NOT MORE THAN m BIT. m is the number of
-    return id.length() == SIZE_ID;
+    byte[] array = id.getBytes();
+    return array.length == bitSize;
   }
 
-  public static boolean validateKey(String key) {
+  public static boolean validateKey(String key, int bitSize) {
     // NEED TO CHECK THAT THE ID IS NOT MORE THAN m BIT. m is the number of
-    return key.length() == SIZE_ID;
+    return key.length() == bitSize;
+  }
+
+  public static String sha1Hash(String input, int numBits) {
+    try {
+      MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+      byte[] hashBytes = sha1.digest(input.getBytes());
+
+      BigInteger hashInt = new BigInteger(1, hashBytes);
+
+      // Calculate the maximum number of bits that can be represented
+      BigInteger mask = BigInteger.ONE.shiftLeft(numBits).subtract(BigInteger.ONE);
+      // Apply the mask to get the desired number of bits
+      BigInteger hashResult = hashInt.and(mask);
+
+      // Return the truncated hash as a binary string
+      return hashResult.toString();
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+    }
+    return "";
+  }
+
+  public static int getFreePort() {
+    try (ServerSocket serverSocket = new ServerSocket(0)) {
+      return serverSocket.getLocalPort();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return -1;
+  }
+
+  public static String getLocalIP() {
+    String ip = null;
+    try(final DatagramSocket socket = new DatagramSocket()) {
+      socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+      ip = socket.getLocalAddress().getHostAddress();
+    } catch (SocketException | UnknownHostException e) {
+      e.printStackTrace();
+    }
+    return ip;
+  }
+
+  public static int getNumFlagParam(String[] args, String flag) {
+    int flagPos;
+    if((flagPos = Util.containsFlag(args, "-n")) != -1) {
+      try {
+        String param = args[flagPos+1];
+        if(!Util.isFlag(param)) {
+          if(isNumeric(param)) {
+            return Integer.parseInt(param);
+          } else {
+            wrongUsage("Found non-numeric parameter, '" + param + "' , for flag '" + flag + "'.");
+          }
+        } else {
+          wrongUsage("Found flag, '" + param + "', instead of parameter for flag '" + flag + "'.");
+        }
+      } catch (ArrayIndexOutOfBoundsException e) {
+        wrongUsage("Missing parameter for flag '" + flag + "'.");
+      }
+    }
+    return -1;
+  }
+
+  public static String getFlagParam(String[] args, String flag) {
+    int flagPos;
+    if((flagPos = Util.containsFlag(args, "-n")) != -1) {
+      try {
+        String param = args[flagPos+1];
+        if(!Util.isFlag(param)) {
+            return param;
+        } else {
+          wrongUsage("Found flag, '" + param + "', instead of parameter for flag '" + flag + "'.");
+        }
+      } catch (ArrayIndexOutOfBoundsException e) {
+        wrongUsage("Missing parameter for flag '" + flag + "'.");
+      }
+    }
+    return "";
+  }
+
+  public static void wrongUsage(String errorMessage) {
+    System.out.println("ERROR: " + errorMessage);
+    System.out.println("\nUsage: Blablablablabla");
+    System.exit(1);
+  }
+
+  public static boolean isNumeric(String strNum) {
+    if (strNum == null) {
+      return false;
+    }
+    try {
+      int d = Integer.parseInt(strNum);
+    } catch (NumberFormatException nfe) {
+      return false;
+    }
+    return true;
   }
 }

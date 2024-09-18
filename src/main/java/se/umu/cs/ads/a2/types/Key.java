@@ -5,11 +5,9 @@ import se.umu.cs.ads.a2.util.Util;
 
 public class Key extends AbstractStringType {
 
-    public Key (String value)
+    public Key (String value, int bitSize)
     {
         super(value);
 
-        if (!Util.validateKey(value))
-            throw new IllegalArgumentException(value);
     }
 }
