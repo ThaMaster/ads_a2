@@ -1,6 +1,6 @@
 package se.umu.cs.ads.a2.backend;
 
-import se.umu.cs.ads.a2.backend.chord.ChordNode;
+import se.umu.cs.ads.a2.backend.chord.NodeClient;
 import se.umu.cs.ads.a2.interfaces.MessengerDHT;
 import se.umu.cs.ads.a2.types.Message;
 import se.umu.cs.ads.a2.types.MessageId;
@@ -27,7 +27,7 @@ public class ChordDHT implements MessengerDHT {
      * @param nrNodes number of nodes to be inserted on start.
      */
     public void initNetwork(int nrNodes) {
-        ChordNode startingNode = new ChordNode(bitSize);
+        NodeClient startingNode = new NodeClient(bitSize);
         this.localId = startingNode.getNodeId();
         addNodes(nrNodes-1);
     }
@@ -40,7 +40,7 @@ public class ChordDHT implements MessengerDHT {
      * @param remoteId remote id of a node in another network.
      */
     public void initNetwork(int nrNodes, NodeId remoteId) {
-        ChordNode startingNode = new ChordNode(bitSize);
+        NodeClient startingNode = new NodeClient(bitSize);
         // Initiates the join with the other network.
         startingNode.join(remoteId);
         this.localId = startingNode.getNodeId();
@@ -49,13 +49,13 @@ public class ChordDHT implements MessengerDHT {
 
     public void addNodes(int amount) {
         for(int i = 0; i < amount; i++) {
-            ChordNode newNode = new ChordNode(4);
+            NodeClient newNode = new NodeClient(4);
             newNode.join(localId);
         }
     }
 
     public void addNode() {
-        ChordNode newNode = new ChordNode(bitSize);
+        NodeClient newNode = new NodeClient(bitSize);
         newNode.join(localId);
     }
 

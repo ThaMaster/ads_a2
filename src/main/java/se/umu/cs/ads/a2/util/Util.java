@@ -324,7 +324,7 @@ public class Util
     return key.length() == bitSize;
   }
 
-  public static String sha1Hash(String input, int numBits) {
+  public static long sha1Hash(String input, int numBits) {
     try {
       MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
       byte[] hashBytes = sha1.digest(input.getBytes());
@@ -337,11 +337,11 @@ public class Util
       BigInteger hashResult = hashInt.and(mask);
 
       // Return the truncated hash as a binary string
-      return hashResult.toString();
+      return hashResult.longValue();
     } catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
     }
-    return "";
+    return -1;
   }
 
   public static int getFreePort() {
@@ -403,6 +403,7 @@ public class Util
   }
 
   public static void wrongUsage(String errorMessage) {
+    // TODO: Complete the usage.
     System.out.println("ERROR: " + errorMessage);
     System.out.println("\nUsage: Blablablablabla");
     System.exit(1);
