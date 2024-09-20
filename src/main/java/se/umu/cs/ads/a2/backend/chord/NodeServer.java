@@ -3,7 +3,10 @@ package se.umu.cs.ads.a2.backend.chord;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import proto.*;
+import proto.MessengerDHTServiceGrpc;
+import se.umu.cs.ads.a2.types.NodeId;
+import se.umu.cs.ads.a2.util.GrpcUtil;
+
 
 import java.io.IOException;
 
@@ -18,8 +21,10 @@ public class NodeServer {
 
     public void start(int port) {
         try {
-            server = ServerBuilder.forPort(port).addService(new MessengerDHTService()).build();
-            server.start();
+            server = ServerBuilder.forPort(port)
+                    .addService(new MessengerDHTService())
+                    .build()
+                    .start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,12 +46,12 @@ public class NodeServer {
     // gRPC implementation below
     private class MessengerDHTService extends MessengerDHTServiceGrpc.MessengerDHTServiceImplBase {
         @Override
-        public void findSuccessor(NodeId request, StreamObserver<NodeId> responseObserver) {
+        public void findSuccessor(proto.NodeId request, StreamObserver<proto.NodeId> responseObserver) {
             super.findSuccessor(request, responseObserver);
         }
 
         @Override
-        public void findClosestPrecedingNode(NodeId request, StreamObserver<NodeId> responseObserver) {
+        public void findClosestPrecedingNode(proto.NodeId request, StreamObserver<proto.NodeId> responseObserver) {
             super.findClosestPrecedingNode(request, responseObserver);
         }
     }

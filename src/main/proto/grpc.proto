@@ -11,10 +11,6 @@ message MessageId {
   string value = 1;
 }
 
-message MessageIds {
-  repeated MessageId messageIds = 1;
-}
-
 message Timestamp {
   int64 value = 1;
 }
@@ -23,17 +19,9 @@ message Username {
   string value = 1;
 }
 
-message Usernames {
-  repeated Username usernames = 1;
-}
-
 message Topic {
   string value = 1;
   bool wildcard = 2;
-}
-
-message Topics {
-  repeated Topic topics = 1;
 }
 
 message Content {
@@ -59,10 +47,11 @@ message Messages {
 
 message Key {
   int64 value = 1;
+  int32 bitSize = 2;
 }
 
 message NodeId {
-  Key key = 1;
+  Key id = 1;
   string ip = 2;
   int32 port = 3;
 }

@@ -6,18 +6,21 @@ import proto.*;
 import se.umu.cs.ads.a2.types.FingerTable;
 import se.umu.cs.ads.a2.types.KeyInterval;
 import se.umu.cs.ads.a2.types.NodeId;
+import se.umu.cs.ads.a2.util.GrpcUtil;
 import se.umu.cs.ads.a2.util.Util;
 
 public class NodeClient {
 
-    private NodeId myId;
-    private NodeId successor;
-    private NodeId predecessor;
+    private final NodeId myId;
+    private final int bitSize;
+
+    private NodeId mySuccessor;
+    private NodeId myPredecessor;
+
     private FingerTable fingerTable;
-    private int bitSize;
 
     // The server that will handle all request from external nodes.
-    private NodeServer server;
+    private final NodeServer server;
 
     // Client attributes
     private ManagedChannel channel = null;
@@ -36,36 +39,44 @@ public class NodeClient {
     }
 
     public void create() {
-    }
-
-    public NodeId findSuccessor(NodeId idToFind) {
-        if (KeyInterval.isKeyInside(myId.getId(), successor.getId(), idToFind.getId())) {
-            return successor;
-        } else {
-            NodeId n0 = findClosestPrecedingFinger(idToFind);
-            connect(n0);
-            // TODO: MAKE PROTO UTIL
-            // NodeId foundSuccessor = stub.findSuccessor(idToFind);
-            disconnect();
-            return foundSuccessor;
-        }
-    }
-
-    public NodeId findPredecessor(NodeId idToFind) {
-        return null;
-    }
-
-    public NodeId findClosestPrecedingFinger(NodeId id) {
-        return null;
+        myPredecessor = null;
+        mySuccessor = myId;
     }
 
     public void join(NodeId id) {
-    }
+        myPredecessor = null;
+        connect(id);
+        proto.NodeId foundSuccessor = stub.findSuccessor(GrpcUtil.toProto(id));
+        disconnect();
+        mySuccessor = GrpcUtil.fromProto(foundSuccessor);
 
-    public void leave() {
     }
 
     public void initFingerTable() {
+    }
+
+    public NodeId findSuccessor(NodeId idToFind) {
+        if (KeyInterval.isKeyInside(myId.getId(), mySuccessor.getId(), idToFind.getId()) || idToFind.getId() == mySuccessor.getId()) {
+            return mySuccessor;
+        } else {
+            NodeId n0 = closestPrecedingFinger(idToFind);
+
+            connect(n0);
+            proto.NodeId successorNode = stub.findSuccessor(GrpcUtil.toProto(idToFind));
+            disconnect();
+
+            return GrpcUtil.fromProto(successorNode);
+        }
+    }
+
+    public NodeId closestPrecedingFinger(NodeId id) {
+        for(int i = bitSize-1; i >= 0; i--) {
+            NodeId sucId = fingerTable.getSuccessor(i);
+            if(KeyInterval.isKeyInside(myId.getId(), id.getId(), sucId.getId()))
+                return sucId;
+        }
+
+        return myId;
     }
 
     public void updateOthers() {

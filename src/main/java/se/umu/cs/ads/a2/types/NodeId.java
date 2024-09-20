@@ -13,6 +13,12 @@ public class NodeId {
         this.port = port;
     }
 
+    public NodeId(Key id, String ip, int port) {
+        this.id = id;
+        this.ip = ip;
+        this.port = port;
+    }
+
     public Key getId() {
         return id;
     }

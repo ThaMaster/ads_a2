@@ -17,11 +17,11 @@ public class KeyInterval {
 
         // Ex. ( 3, 8 )
         if (sVal < eVal)
-            return sVal <= kVal && eVal > kVal;
+            return sVal < kVal && eVal > kVal;
 
         // Ex. ( 8, 3 )
         if (sVal > eVal)
-            return (sVal <= kVal && kVal <= Math.pow(2, key.getBitSize()) - 1) || (0 <= kVal && kVal < eVal);
+            return (sVal < kVal && kVal <= Math.pow(2, key.getBitSize()) - 1) || (0 <= kVal && kVal < eVal);
 
         // Ex. ( 3, 3 )
         return sVal == kVal;
@@ -35,11 +35,11 @@ public class KeyInterval {
 
         // Ex. ( 3, 8 )
         if (sVal < eVal)
-            return sVal <= kVal && eVal > kVal;
+            return sVal < kVal && eVal > kVal;
 
         // Ex. ( 8, 3 )
         if (sVal > eVal)
-            return (sVal <= kVal && kVal <= Math.pow(2, key.getBitSize()) - 1) || (0 <= kVal && kVal < eVal);
+            return (sVal < kVal && kVal <= Math.pow(2, key.getBitSize()) - 1) || (0 <= kVal && kVal < eVal);
 
         // Ex. ( 3, 3 )
         return sVal == kVal;

@@ -16,7 +16,7 @@ public class GrpcUtil {
      * @param javaId the java class of MessageId
      * @return the proto version of the MessageId
      */
-    public static proto.MessageId javaToProto(MessageId javaId) {
+    public static proto.MessageId toProto(MessageId javaId) {
         return proto.MessageId.newBuilder().setValue(javaId.getValue()).build();
     }
 
@@ -26,36 +26,8 @@ public class GrpcUtil {
      * @param protoId the proto version of MessageId
      * @return the java version of MessageId
      */
-    public static MessageId protoToJava(proto.MessageId protoId) {
+    public static MessageId fromProto(proto.MessageId protoId) {
         return new MessageId(protoId.getValue());
-    }
-
-    /**
-     * Converts an array of the java MessageId class to the proto version.
-     *
-     * @param javaIds the array of the java class of MessageId
-     * @return the proto version of the array
-     */
-    public static proto.MessageIds javaToProto(MessageId[] javaIds) {
-        proto.MessageIds.Builder builder = proto.MessageIds.newBuilder();
-        for (MessageId javaTopic : javaIds) {
-            builder.addMessageIds(javaToProto(javaTopic));
-        }
-        return builder.build();
-    }
-
-    /**
-     * Converts an array of the proto version of MessageId to the java class.
-     *
-     * @param protoIds the array of the proto version of MessageID
-     * @return the java class version of the array
-     */
-    public static MessageId[] protoToJava(proto.MessageIds protoIds) {
-        MessageId[] ids = new MessageId[protoIds.getMessageIdsCount()];
-        for (int i = 0; i < ids.length; i++) {
-            ids[i] = protoToJava(protoIds.getMessageIds(i));
-        }
-        return ids;
     }
 
     /**
@@ -64,7 +36,7 @@ public class GrpcUtil {
      * @param javaTimestamp the java class of Timestamp
      * @return the proto version of Timestamp
      */
-    public static proto.Timestamp javaToProto(Timestamp javaTimestamp) {
+    public static proto.Timestamp toProto(Timestamp javaTimestamp) {
         return proto.Timestamp.newBuilder().setValue(javaTimestamp.getValue()).build();
     }
 
@@ -74,7 +46,7 @@ public class GrpcUtil {
      * @param protoTimestamp the proto version of Timestamp
      * @return the java class of Timestamp
      */
-    public static Timestamp protoToJava(proto.Timestamp protoTimestamp) {
+    public static Timestamp fromProto(proto.Timestamp protoTimestamp) {
         return new Timestamp(protoTimestamp.getValue());
     }
 
@@ -84,7 +56,7 @@ public class GrpcUtil {
      * @param javaUsername the java class of Username
      * @return the proto version of Username
      */
-    public static proto.Username javaToProto(Username javaUsername) {
+    public static proto.Username toProto(Username javaUsername) {
         return proto.Username.newBuilder().setValue(javaUsername.getValue()).build();
     }
 
@@ -94,45 +66,17 @@ public class GrpcUtil {
      * @param protoUsername the proto version of Username
      * @return the java class of Username
      */
-    public static Username protoToJava(proto.Username protoUsername) {
+    public static Username fromProto(proto.Username protoUsername) {
         return new Username(protoUsername.getValue());
     }
 
-    /**
-     * Converts an array of the java Username class to the proto version.
-     *
-     * @param javaUsernames the array of the java class of Username
-     * @return the converted proto version of the array
-     */
-    public static proto.Usernames javaToProto(Username[] javaUsernames) {
-        proto.Usernames.Builder builder = proto.Usernames.newBuilder();
-        for (Username username : javaUsernames) {
-            builder.addUsernames(javaToProto(username));
-        }
-        return builder.build();
-    }
-
-    /**
-     * Converts an array of the proto version of Username to the java class.
-     *
-     * @param protoUsernames the array of the proto version of Username
-     * @return the java class version of the array
-     */
-    public static Username[] protoToJava(proto.Usernames protoUsernames) {
-        Username[] usernames = new Username[protoUsernames.getUsernamesCount()];
-        for (int i = 0; i < usernames.length; i++) {
-            usernames[i] = protoToJava(protoUsernames.getUsernames(i));
-        }
-        return usernames;
-    }
-
-    public static proto.Topic javaToProto(Topic javaTopic) {
+    public static proto.Topic toProto(Topic javaTopic) {
         return proto.Topic.newBuilder()
                 .setValue(javaTopic.getValue())
                 .setWildcard(javaTopic.getWildcard()).build();
     }
 
-    public static Topic protoToJava(proto.Topic protoTopic) {
+    public static Topic fromProto(proto.Topic protoTopic) {
         if (protoTopic.getWildcard()) {
             return new Topic(protoTopic.getValue() + "*");
         } else {
@@ -140,73 +84,62 @@ public class GrpcUtil {
         }
     }
 
-    public static proto.Topics javaToProto(Topic[] javaTopics) {
-        proto.Topics.Builder builder = proto.Topics.newBuilder();
-        for (Topic javaTopic : javaTopics) {
-            builder.addTopics(javaToProto(javaTopic));
-        }
-        return builder.build();
-    }
-
-    public static Topic[] protoToJava(proto.Topics protoTopics) {
-        Topic[] topics = new Topic[protoTopics.getTopicsCount()];
-        for (int i = 0; i < topics.length; i++) {
-            topics[i] = protoToJava(protoTopics.getTopics(i));
-        }
-        return topics;
-    }
-
-    public static proto.Content javaToProto(Content javaContent) {
+    public static proto.Content toProto(Content javaContent) {
         return proto.Content.newBuilder().setValue(javaContent.getValue()).build();
     }
 
-    public static Content protoToJava(proto.Content protoContent) {
+    public static Content fromProto(proto.Content protoContent) {
         return new Content(protoContent.getValue());
     }
 
-    public static proto.Data javaToProto(Data javaData) {
+    public static proto.Data toProto(Data javaData) {
         return proto.Data.newBuilder().setData(ByteString.copyFrom(javaData.getValue())).build();
     }
 
-    public static Data protoToJava(proto.Data protoData) {
+    public static Data fromProto(proto.Data protoData) {
         return new Data(protoData.getData().toByteArray());
     }
 
-    public static proto.Message javaToProto(Message javaMessage) {
-        return proto.Message.newBuilder()
-                .setId(javaToProto(javaMessage.getId()))
-                .setTimestamp(javaToProto(javaMessage.getTimestamp()))
-                .setUsername(javaToProto(javaMessage.getUsername()))
-                .setTopic(javaToProto(javaMessage.getTopic()))
-                .setContent(javaToProto(javaMessage.getContent()))
-                .setData(javaToProto(javaMessage.getData()))
+    public static proto.Key toProto(Key javaKey) {
+        return proto.Key.newBuilder().setValue(javaKey.getValue()).setBitSize(javaKey.getBitSize()).build();
+    }
+
+    public static Key fromProto(proto.Key protoKey) {
+        return new Key(protoKey.getValue(), protoKey.getBitSize());
+    }
+
+    public static proto.NodeId toProto(NodeId javaNodeId) {
+        return proto.NodeId.newBuilder()
+                .setId(toProto(javaNodeId.getId()))
+                .setIp(javaNodeId.getIp())
+                .setPort(javaNodeId.getPort())
                 .build();
     }
 
-    public static Message protoToJava(proto.Message protoMessage) {
+    public static NodeId fromProto(proto.NodeId protoNodeId) {
+        return new NodeId(fromProto(protoNodeId.getId()), protoNodeId.getIp(), protoNodeId.getPort());
+
+    }
+
+    public static proto.Message toProto(Message javaMessage) {
+        return proto.Message.newBuilder()
+                .setId(toProto(javaMessage.getId()))
+                .setTimestamp(toProto(javaMessage.getTimestamp()))
+                .setUsername(toProto(javaMessage.getUsername()))
+                .setTopic(toProto(javaMessage.getTopic()))
+                .setContent(toProto(javaMessage.getContent()))
+                .setData(toProto(javaMessage.getData()))
+                .build();
+    }
+
+    public static Message fromProto(proto.Message protoMessage) {
         return new Message(
-                protoToJava(protoMessage.getId()),
-                protoToJava(protoMessage.getTimestamp()),
-                protoToJava(protoMessage.getUsername()),
-                protoToJava(protoMessage.getTopic()),
-                protoToJava(protoMessage.getContent()),
-                protoToJava(protoMessage.getData())
+                fromProto(protoMessage.getId()),
+                fromProto(protoMessage.getTimestamp()),
+                fromProto(protoMessage.getUsername()),
+                fromProto(protoMessage.getTopic()),
+                fromProto(protoMessage.getContent()),
+                fromProto(protoMessage.getData())
         );
-    }
-
-    public static proto.Messages javaToProto(Message[] javaMessages) {
-        proto.Messages.Builder builder = proto.Messages.newBuilder();
-        for (Message message : javaMessages) {
-            builder.addMessages(javaToProto(message));
-        }
-        return builder.build();
-    }
-
-    public static Message[] protoToJava(proto.Messages protoMessages) {
-        Message[] messages = new Message[protoMessages.getMessagesCount()];
-        for (int i = 0; i < messages.length; i++) {
-            messages[i] = protoToJava(protoMessages.getMessages(i));
-        }
-        return messages;
     }
 }
